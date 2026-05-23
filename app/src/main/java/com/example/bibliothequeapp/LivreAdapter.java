@@ -1,22 +1,28 @@
 package com.example.bibliothequeapp;
+
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.content.Intent;
-
-import androidx.annotation.NonNull;
+import android.widget.Toast;import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class LivreAdapter extends RecyclerView.Adapter<LivreAdapter.LivreViewHolder> {
 
-    private ArrayList<Livre> listeLivres;
+    public interface OnLivreClickListener {
+        void onLivreClick(Livre livre);
+        void onLivreLongClick(Livre livre, int position);
+    }
 
-    public LivreAdapter(ArrayList<Livre> listeLivres) {
+    private List<Livre> listeLivres;
+    private OnLivreClickListener listener;
+
+    public LivreAdapter(List<Livre> listeLivres, OnLivreClickListener listener) {
         this.listeLivres = listeLivres;
+        this.listener = listener;
     }
 
     @NonNull
@@ -24,7 +30,6 @@ public class LivreAdapter extends RecyclerView.Adapter<LivreAdapter.LivreViewHol
     public LivreViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_livre, parent, false);
-
         return new LivreViewHolder(view);
     }
 
@@ -44,23 +49,19 @@ public class LivreAdapter extends RecyclerView.Adapter<LivreAdapter.LivreViewHol
             holder.tvDisponibilite.setBackgroundColor(Color.parseColor("#C62828"));
         }
 
-        // Clic simple : ouvrir le détail du livre
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), DetailActivity.class);
-            intent.putExtra("livre", livre);
-            v.getContext().startActivity(intent);
+            if (listener != null) {
+                listener.onLivreClick(livre);
+            }
         });
 
-        // Clic long : ouvrir le formulaire en mode modification
         holder.itemView.setOnLongClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), AddEditActivity.class);
-            intent.putExtra(AddEditActivity.EXTRA_MODE, AddEditActivity.MODE_EDIT);
-            intent.putExtra(AddEditActivity.EXTRA_LIVRE, livre);
-            intent.putExtra(AddEditActivity.EXTRA_POSITION, holder.getAdapterPosition());
-
-            // Ici, on démarre l'Activity depuis MainActivity.
-            // Pour garder le TP simple, le clic long sera plutôt géré dans MainActivity
-            // dans une version améliorée.
+            if (listener != null) {
+                int currentPosition = holder.getAdapterPosition();
+                if (currentPosition != RecyclerView.NO_POSITION) {
+                    listener.onLivreLongClick(livre, currentPosition);
+                }
+            }
             return true;
         });
     }
@@ -78,7 +79,6 @@ public class LivreAdapter extends RecyclerView.Adapter<LivreAdapter.LivreViewHol
 
         public LivreViewHolder(@NonNull View itemView) {
             super(itemView);
-
             tvTitreLivre = itemView.findViewById(R.id.tvTitreLivre);
             tvAuteurLivre = itemView.findViewById(R.id.tvAuteurLivre);
             tvIsbnLivre = itemView.findViewById(R.id.tvIsbnLivre);
