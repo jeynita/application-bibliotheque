@@ -1,11 +1,10 @@
 package com.example.bibliothequeapp;
-import android.content.Intent;
-import com.example.bibliothequeapp.R;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.graphics.Color;
 import android.widget.TextView;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,10 +13,8 @@ import java.util.ArrayList;
 
 public class LivreAdapter extends RecyclerView.Adapter<LivreAdapter.LivreViewHolder> {
 
-    // Liste des livres à afficher
     private ArrayList<Livre> listeLivres;
 
-    // Constructeur de l'adapter
     public LivreAdapter(ArrayList<Livre> listeLivres) {
         this.listeLivres = listeLivres;
     }
@@ -25,7 +22,6 @@ public class LivreAdapter extends RecyclerView.Adapter<LivreAdapter.LivreViewHol
     @NonNull
     @Override
     public LivreViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Convertit le fichier XML item_livre.xml en objet View
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_livre, parent, false);
 
@@ -34,41 +30,47 @@ public class LivreAdapter extends RecyclerView.Adapter<LivreAdapter.LivreViewHol
 
     @Override
     public void onBindViewHolder(@NonNull LivreViewHolder holder, int position) {
-        // Récupère le livre à la position courante
         Livre livre = listeLivres.get(position);
 
-        // Injecte les données du livre dans les vues
         holder.tvTitreLivre.setText(livre.getTitre());
         holder.tvAuteurLivre.setText("Auteur : " + livre.getAuteur());
         holder.tvIsbnLivre.setText("ISBN : " + livre.getIsbn());
 
-        // Gestion du badge de disponibilité
         if (livre.isDisponible()) {
             holder.tvDisponibilite.setText("Disponible");
-            holder.tvDisponibilite.setBackgroundColor(Color.parseColor("#2E7D32")); // Vert
+            holder.tvDisponibilite.setBackgroundColor(Color.parseColor("#2E7D32"));
         } else {
             holder.tvDisponibilite.setText("Indisponible");
-            holder.tvDisponibilite.setBackgroundColor(Color.parseColor("#C62828")); // Rouge
-
-            holder.itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(v.getContext(), DetailActivity.class);
-                intent.putExtra("livre", livre);
-                v.getContext().startActivity(intent);
-            });
+            holder.tvDisponibilite.setBackgroundColor(Color.parseColor("#C62828"));
         }
+
+        // Clic simple : ouvrir le détail du livre
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), DetailActivity.class);
+            intent.putExtra("livre", livre);
+            v.getContext().startActivity(intent);
+        });
+
+        // Clic long : ouvrir le formulaire en mode modification
+        holder.itemView.setOnLongClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), AddEditActivity.class);
+            intent.putExtra(AddEditActivity.EXTRA_MODE, AddEditActivity.MODE_EDIT);
+            intent.putExtra(AddEditActivity.EXTRA_LIVRE, livre);
+            intent.putExtra(AddEditActivity.EXTRA_POSITION, holder.getAdapterPosition());
+
+            // Ici, on démarre l'Activity depuis MainActivity.
+            // Pour garder le TP simple, le clic long sera plutôt géré dans MainActivity
+            // dans une version améliorée.
+            return true;
+        });
     }
 
     @Override
     public int getItemCount() {
-        // Retourne le nombre total d'éléments à afficher
         return listeLivres.size();
     }
 
-
-
-    // ViewHolder statique interne
     public static class LivreViewHolder extends RecyclerView.ViewHolder {
-
         TextView tvTitreLivre;
         TextView tvAuteurLivre;
         TextView tvIsbnLivre;
@@ -77,7 +79,6 @@ public class LivreAdapter extends RecyclerView.Adapter<LivreAdapter.LivreViewHol
         public LivreViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            // Liaison entre les composants XML et les variables Java
             tvTitreLivre = itemView.findViewById(R.id.tvTitreLivre);
             tvAuteurLivre = itemView.findViewById(R.id.tvAuteurLivre);
             tvIsbnLivre = itemView.findViewById(R.id.tvIsbnLivre);

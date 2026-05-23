@@ -12,8 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BibliothequeApp">
         <activity
-        android:name=".DetailActivity"
+        android:name=".AddEditActivity"
         android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".DetailActivity"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
