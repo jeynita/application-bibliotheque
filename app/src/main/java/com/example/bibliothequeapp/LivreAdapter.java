@@ -1,5 +1,5 @@
 package com.example.bibliothequeapp;
-
+import android.content.Intent;
 import com.example.bibliothequeapp.R;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +49,12 @@ public class LivreAdapter extends RecyclerView.Adapter<LivreAdapter.LivreViewHol
         } else {
             holder.tvDisponibilite.setText("Indisponible");
             holder.tvDisponibilite.setBackgroundColor(Color.parseColor("#C62828")); // Rouge
+
+            holder.itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(v.getContext(), DetailActivity.class);
+                intent.putExtra("livre", livre);
+                v.getContext().startActivity(intent);
+            });
         }
     }
 
@@ -57,6 +63,8 @@ public class LivreAdapter extends RecyclerView.Adapter<LivreAdapter.LivreViewHol
         // Retourne le nombre total d'éléments à afficher
         return listeLivres.size();
     }
+
+
 
     // ViewHolder statique interne
     public static class LivreViewHolder extends RecyclerView.ViewHolder {

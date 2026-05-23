@@ -1,3 +1,5 @@
+package com.example.bibliothequeapp;
+
 import com.example.bibliothequeapp.LivreAdapter;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
