@@ -35,6 +35,7 @@ android {
     }
 }
 
+
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -42,6 +43,10 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.recyclerview)
     implementation(libs.cardview)
+
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
